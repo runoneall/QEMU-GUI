@@ -1,2 +1,3 @@
-# qemu-gen
-gen qemu command
+# QEMU-GUI
+
+GUI for QEMU command line tool.
