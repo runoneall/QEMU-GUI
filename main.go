@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"image/color"
 	"os"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
@@ -93,7 +95,7 @@ func main() {
 	// init window
 	myApp := app.New()
 	myWindow := myApp.NewWindow("QEMU GUI")
-	myWindow.Resize(fyne.NewSize(0, 600))
+	myWindow.Resize(fyne.NewSize(800, 600))
 
 	// vm list
 	vmList := container.NewVBox()
@@ -112,51 +114,51 @@ func main() {
 
 	// top buttons
 	topButtons := container.NewVBox(
-		layout.NewSpacer(),
-		container.NewHBox(
-			layout.NewSpacer(),
+		container.NewBorder(
+			nil,                                   // disable top
+			canvas.NewRectangle(color.Gray{0x99}), // bottom border
+			nil, nil,                              // disable left right
+			container.NewHBox( // top buttons
 
-			// new vm
-			widget.NewButtonWithIcon("New", theme.DocumentCreateIcon(), func() {
-				fmt.Println("new vm")
-			}),
+				// new vm
+				widget.NewButtonWithIcon("New", theme.DocumentCreateIcon(), func() {
+					fmt.Println("new vm")
+				}),
 
-			// refresh vm list
-			widget.NewButtonWithIcon("Refresh", theme.ViewRefreshIcon(), func() {
-				vm_list_refresh()
-			}),
+				// refresh vm list
+				widget.NewButtonWithIcon("Refresh", theme.ViewRefreshIcon(), func() {
+					vm_list_refresh()
+				}),
 
-			// settings
-			widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), func() {
-				fmt.Println("settings")
-			}),
+				// settings
+				widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), func() {
+					fmt.Println("settings")
+				}),
 
-			// help
-			widget.NewButtonWithIcon("Help", theme.HelpIcon(), func() {
-				fmt.Println("help")
-			}),
+				// help
+				widget.NewButtonWithIcon("Help", theme.HelpIcon(), func() {
+					fmt.Println("help")
+				}),
 
-			// about
-			widget.NewButtonWithIcon("About", theme.InfoIcon(), func() {
-				fmt.Println("about")
-			}),
+				// about
+				widget.NewButtonWithIcon("About", theme.InfoIcon(), func() {
+					fmt.Println("about")
+				}),
 
-			// exit
-			widget.NewButtonWithIcon("Exit", theme.CancelIcon(), func() {
-				myApp.Quit()
-			}),
+				// exit
+				widget.NewButtonWithIcon("Exit", theme.CancelIcon(), func() {
+					myApp.Quit()
+				}),
 
-			layout.NewSpacer(),
+				layout.NewSpacer(),
+			),
 		),
-		layout.NewSpacer(),
 	)
 
 	// show window
 	myWindow.SetContent(container.NewBorder(
-		topButtons,                   // top
-		nil,                          // bottom
-		nil,                          // left
-		nil,                          // right
+		topButtons,    // top
+		nil, nil, nil, // disable bottom left right
 		container.NewVScroll(vmList), // content
 	))
 	myWindow.ShowAndRun()
