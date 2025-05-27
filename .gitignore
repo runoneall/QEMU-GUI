@@ -29,3 +29,6 @@ go.work.sum
 
 # logs
 *.log
+
+# vm data
+data

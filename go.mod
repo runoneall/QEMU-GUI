@@ -1,4 +1,4 @@
-module qemugen
+module qemu-gui
 
 go 1.24.3
 
