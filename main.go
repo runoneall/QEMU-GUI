@@ -93,7 +93,22 @@ func main() {
 	// init window
 	myApp := app.New()
 	myWindow := myApp.NewWindow("QEMU GUI")
-	myWindow.Resize(fyne.NewSize(0, 400))
+	myWindow.Resize(fyne.NewSize(0, 600))
+
+	// vm list
+	vmList := container.NewVBox()
+	vm_list_refresh := func() {
+		vm_list := get_vm_list()
+		vmList.RemoveAll()
+		if len(vm_list) > 0 {
+			for _, vm_name := range vm_list {
+				vmList.Add(widget.NewLabel(vm_name))
+			}
+		} else {
+			vmList.Add(widget.NewLabel("Click New to create new VM."))
+		}
+	}
+	vm_list_refresh()
 
 	// top buttons
 	topButtons := container.NewVBox(
@@ -104,6 +119,11 @@ func main() {
 			// new vm
 			widget.NewButtonWithIcon("New", theme.DocumentCreateIcon(), func() {
 				fmt.Println("new vm")
+			}),
+
+			// refresh vm list
+			widget.NewButtonWithIcon("Refresh", theme.ViewRefreshIcon(), func() {
+				vm_list_refresh()
 			}),
 
 			// settings
@@ -130,17 +150,6 @@ func main() {
 		),
 		layout.NewSpacer(),
 	)
-
-	// vm list
-	vmList := container.NewVBox()
-	vm_list := get_vm_list()
-	if len(vm_list) > 0 {
-		for _, vm_name := range vm_list {
-			vmList.Add(widget.NewLabel(vm_name))
-		}
-	} else {
-		vmList.Add(widget.NewLabel("Click New to create new VM."))
-	}
 
 	// show window
 	myWindow.SetContent(container.NewBorder(
