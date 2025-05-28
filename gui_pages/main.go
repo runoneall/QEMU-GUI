@@ -1,4 +1,4 @@
-package pages
+package gui_pages
 
 import (
 	"fmt"
@@ -40,15 +40,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 
 				// new vm
 				widget.NewButtonWithIcon("New", theme.DocumentCreateIcon(), func() {
-
-					// new vm window
-					newVMWindow := myApp.NewWindow("New VM")
-					newVMWindow.Resize(fyne.NewSize(400, 200))
-
-					// show window
-					newVMWindow.SetContent(widget.NewLabel("New VM"))
-					newVMWindow.Show()
-
+					New_VM_Page(myApp)
 				}),
 
 				// refresh vm list
@@ -63,39 +55,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 
 				// about
 				widget.NewButtonWithIcon("About", theme.InfoIcon(), func() {
-
-					// about window
-					aboutWindow := myApp.NewWindow("About")
-					aboutWindow.Resize(fyne.NewSize(400, 300))
-
-					// right area
-					aboutRight := container.NewVBox(
-						widget.NewLabel("Click Left Button To Use"),
-					)
-
-					// left button
-					aboutLeft := container.NewVBox(
-						widget.NewButtonWithIcon("", theme.InfoIcon(), func() {
-							aboutRight.RemoveAll()
-							aboutRight.Add(widget.NewLabel("关于"))
-						}),
-						widget.NewButtonWithIcon("", theme.ComputerIcon(), func() {
-							aboutRight.RemoveAll()
-							aboutRight.Add(widget.NewLabelWithStyle(
-								"QEMU Excutable Check",
-								fyne.TextAlignCenter,
-								fyne.TextStyle{Bold: true},
-							))
-						}),
-					)
-
-					// show window
-					aboutWindow.SetContent(container.NewHBox(
-						aboutLeft,
-						container.NewVScroll(aboutRight),
-					))
-					aboutWindow.Show()
-
+					About_Page(myApp)
 				}),
 
 				// exit

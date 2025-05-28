@@ -1,4 +1,4 @@
-package main
+package vars
 
 var QEMU_SYSTEMS = []string{
 	"qemu-system-aarch64",

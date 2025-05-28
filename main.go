@@ -1,7 +1,7 @@
 package main
 
 import (
-	gui_pages "qemu-gui/gui-pages"
+	"qemu-gui/gui_pages"
 	"qemu-gui/helper"
 
 	"fyne.io/fyne/v2"
