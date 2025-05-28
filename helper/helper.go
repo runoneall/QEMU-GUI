@@ -1,4 +1,4 @@
-package main
+package helper
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func init_folder(dir_path string) bool {
+func Init_Folder(dir_path string) bool {
 	if _, err := os.Stat(dir_path); os.IsNotExist(err) {
 		os.Mkdir(dir_path, 0755)
 		return true
@@ -14,7 +14,7 @@ func init_folder(dir_path string) bool {
 	return false
 }
 
-func write_json(file_path string, data map[string]interface{}) error {
+func Write_Json(file_path string, data map[string]interface{}) error {
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func write_json(file_path string, data map[string]interface{}) error {
 	return nil
 }
 
-func read_json(file_path string) (map[string]interface{}, error) {
+func Read_Json(file_path string) (map[string]interface{}, error) {
 	content, err := os.ReadFile(file_path)
 	if err != nil {
 		return nil, err
@@ -56,8 +56,8 @@ func InterfaceSliceToStringSlice(interfaceSlice []interface{}) ([]string, error)
 	return stringSlice, nil
 }
 
-func get_vm_list() []string {
-	data, err := read_json("./data/config/config.json")
+func Get_VM_List() []string {
+	data, err := Read_Json("./data/config/config.json")
 	if err != nil {
 		return []string{}
 	}
@@ -68,15 +68,15 @@ func get_vm_list() []string {
 	return vm_list
 }
 
-func first_run_init() {
+func First_Run_Init() {
 	// init folder
-	init_folder("./data")
-	init_folder("./data/config")
-	init_folder("./data/vms")
+	Init_Folder("./data")
+	Init_Folder("./data/config")
+	Init_Folder("./data/vms")
 
 	// init config file
 	if _, err := os.Stat("./data/config/config.json"); os.IsNotExist(err) {
-		write_json("./data/config/config.json", map[string]interface{}{
+		Write_Json("./data/config/config.json", map[string]interface{}{
 			"vm_list": []string{},
 			"vm_uuid": map[string]string{},
 		})
