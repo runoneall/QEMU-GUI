@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func New_VM_Page(myApp fyne.App) {
+func New_VM_Page(myApp fyne.App, on_finish func()) {
 
 	// vm window
 	newVMWindow := myApp.NewWindow("New VM")
@@ -115,6 +115,9 @@ func New_VM_Page(myApp fyne.App) {
 			},
 		)
 		helper.Add_VM_To_List(vm_name.Text, vm_uuid.Text)
+
+		// callback
+		on_finish()
 
 		// close window
 		newVMWindow.Close()

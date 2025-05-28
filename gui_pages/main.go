@@ -5,7 +5,6 @@ import (
 	"image/color"
 	"qemu-gui/helper"
 	"qemu-gui/qemu_manager"
-	"qemu-gui/ui_extra"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -71,35 +70,11 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 			for _, vm_name := range vm_list {
 				vm_info := helper.GET_VM_Info(helper.GET_VM_UUID(vm_name))
 
-				// vm item container
-				vmItem := ui_extra.NewClickableContainer(
-					container.NewHBox(
-
-						// vm icon
-						container.NewCenter(
-							widget.NewIcon(theme.ComputerIcon()),
-						),
-
-						// vm info
-						widget.NewLabel(fmt.Sprintf(
-							"%s\n%s CPU, %sM Memory",
-							vm_name,
-							vm_info["cpu"],
-							vm_info["memory"],
-						)),
-					),
-				)
-
-				// set on tapped
-				vmItem.OnTapped = func() {
-					vmControl.RemoveAll()
-					drawVMControl(vm_name, vm_info)
-				}
-
-				// add to vm list
-				vmList.Add(container.NewBorder(
-					nil, canvas.NewRectangle(color.Gray{0x99}),
-					nil, nil, vmItem,
+				vmList.Add(widget.NewButtonWithIcon(
+					vm_name, theme.ComputerIcon(), func() {
+						vmControl.RemoveAll()
+						drawVMControl(vm_name, vm_info)
+					},
 				))
 
 			}
@@ -119,17 +94,12 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 
 				// new vm
 				widget.NewButtonWithIcon("New", theme.DocumentCreateIcon(), func() {
-					New_VM_Page(myApp)
+					New_VM_Page(myApp, vm_list_refresh)
 				}),
 
 				// refresh vm list
 				widget.NewButtonWithIcon("Refresh", theme.ViewRefreshIcon(), func() {
 					vm_list_refresh()
-				}),
-
-				// settings
-				widget.NewButtonWithIcon("Settings", theme.SettingsIcon(), func() {
-					fmt.Println("settings")
 				}),
 
 				// about
