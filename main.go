@@ -17,6 +17,7 @@ func main() {
 	myWindow := myApp.NewWindow("QEMU GUI")
 	myWindow.Resize(fyne.NewSize(800, 600))
 
+	// set content
 	myWindow.SetContent(gui_pages.Main_Page(myApp))
 	myWindow.Show()
 	myApp.Run()
