@@ -14,6 +14,8 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+var IS_VM_REFRESH = 0
+
 func Main_Page(myApp fyne.App) *fyne.Container {
 
 	// vm control
@@ -56,7 +58,19 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 				fmt.Println("edit")
 			}),
 			widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
-				fmt.Println("delete")
+
+				// delete vm
+				vm_uuid := vm_info["uuid"]
+				helper.Delete_VM_From_List(vm_name, vm_uuid)
+				helper.Delete_VM_Config(vm_uuid)
+
+				// refresh vm list
+				IS_VM_REFRESH = 1
+
+				// clear vm control
+				vmControl.RemoveAll()
+				vmControl.Add(widget.NewLabel("Select VM To Use"))
+
 			}),
 		))
 	}
@@ -70,11 +84,13 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 			for _, vm_name := range vm_list {
 				vm_info := helper.GET_VM_Info(helper.GET_VM_UUID(vm_name))
 
-				vmList.Add(widget.NewButtonWithIcon(
-					vm_name, theme.ComputerIcon(), func() {
-						vmControl.RemoveAll()
-						drawVMControl(vm_name, vm_info)
-					},
+				vmList.Add(container.NewHScroll(
+					widget.NewButtonWithIcon(
+						vm_name, theme.ComputerIcon(), func() {
+							vmControl.RemoveAll()
+							drawVMControl(vm_name, vm_info)
+						},
+					),
 				))
 
 			}
@@ -83,6 +99,15 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		}
 	}
 	vm_list_refresh()
+	go func() {
+		for {
+			if IS_VM_REFRESH == 1 {
+				fmt.Println("flag set, refresh vm list")
+				vm_list_refresh()
+				IS_VM_REFRESH = 0
+			}
+		}
+	}()
 
 	// top buttons
 	topButtons := container.NewVBox(
@@ -99,7 +124,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 
 				// refresh vm list
 				widget.NewButtonWithIcon("Refresh", theme.ViewRefreshIcon(), func() {
-					vm_list_refresh()
+					IS_VM_REFRESH = 1
 				}),
 
 				// about

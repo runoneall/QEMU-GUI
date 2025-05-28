@@ -2,6 +2,7 @@ package helper
 
 import (
 	"fmt"
+	"os"
 	"qemu-gui/vars"
 )
 
@@ -90,4 +91,45 @@ func GET_VM_Info(vm_uuid string) map[string]string {
 		return nil
 	}
 	return config
+}
+
+func Delete_VM_From_List(vm_name string, vm_uuid string) bool {
+
+	// remove vm name
+	data, err := Read_Json(vars.CONFIG_PATH + "/config.json")
+	if err != nil {
+		return false
+	}
+	vm_list, err := InterfaceSliceToStringSlice(data["vm_list"].([]interface{}))
+	if err != nil {
+		return false
+	}
+	for i, v := range vm_list {
+		if v == vm_name {
+			vm_list = append(vm_list[:i], vm_list[i+1:]...)
+			break
+		}
+	}
+	data["vm_list"] = vm_list
+
+	// remove vm uuid
+	vm_uuids, err := InterfaceMapToStringMap(data["vm_uuid"].(map[string]interface{}))
+	if err != nil {
+		return false
+	}
+	delete(vm_uuids, vm_name)
+	data["vm_uuid"] = vm_uuids
+
+	// write config
+	Write_Json(vars.CONFIG_PATH+"/config.json", data)
+	return true
+}
+
+func Delete_VM_Config(vm_uuid string) bool {
+	file_path := vars.CONFIG_PATH + "/" + vm_uuid + ".json"
+	if _, err := os.Stat(file_path); os.IsNotExist(err) {
+		return false
+	}
+	os.Remove(file_path)
+	return true
 }
