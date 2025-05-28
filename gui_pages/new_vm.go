@@ -2,6 +2,7 @@ package gui_pages
 
 import (
 	"qemu-gui/helper"
+	"qemu-gui/ui_extra"
 	"qemu-gui/vars"
 	"regexp"
 
@@ -27,7 +28,7 @@ func New_VM_Page(myApp fyne.App) {
 	// form fields (disk pick)
 	vm_disk := widget.NewEntry()
 	vm_disk_choose_button := widget.NewButton("Select", func() {
-		helper.ShowFilePicker(newVMWindow, func(path string) {
+		ui_extra.FilePicker(newVMWindow, func(path string) {
 			if path == "" {
 				vm_disk.SetText("No File Selected")
 				return

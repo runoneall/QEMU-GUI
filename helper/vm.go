@@ -41,6 +41,18 @@ func Get_VM_List() []string {
 	return vm_list
 }
 
+func GET_VM_UUID(vm_name string) string {
+	data, err := Read_Json(vars.CONFIG_PATH + "/config.json")
+	if err != nil {
+		return ""
+	}
+	vm_uuids, err := InterfaceMapToStringMap(data["vm_uuid"].(map[string]interface{}))
+	if err != nil {
+		return ""
+	}
+	return vm_uuids[vm_name]
+}
+
 func Add_VM_To_List(vm_name string, vm_uuid string) bool {
 
 	// add vm name

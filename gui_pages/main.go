@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"qemu-gui/helper"
+	"qemu-gui/ui_extra"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -15,6 +16,11 @@ import (
 
 func Main_Page(myApp fyne.App) *fyne.Container {
 
+	// vm control
+	vmControl := container.NewVBox(
+		widget.NewLabel("Select VM To Use"),
+	)
+
 	// vm list
 	vmList := container.NewVBox()
 	vm_list_refresh := func() {
@@ -22,7 +28,20 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		vmList.RemoveAll()
 		if len(vm_list) > 0 {
 			for _, vm_name := range vm_list {
-				vmList.Add(widget.NewLabel(vm_name))
+
+				// vm item container
+				vmItem := ui_extra.NewClickableContainer(
+					widget.NewLabel(vm_name),
+				)
+
+				// set on tapped
+				vmItem.OnTapped = func() {
+					fmt.Println(vm_name)
+				}
+
+				// add to vm list
+				vmList.Add(vmItem)
+
 			}
 		} else {
 			vmList.Add(widget.NewLabel("Click New to create new VM."))
@@ -71,7 +90,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 	// show window
 	mainContainer := container.NewHSplit(
 		container.NewVScroll(vmList),
-		widget.NewLabel("VM Control"),
+		vmControl,
 	)
 	mainContainer.SetOffset(0.25)
 
