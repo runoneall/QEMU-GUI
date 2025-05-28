@@ -102,7 +102,6 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 	go func() {
 		for {
 			if IS_VM_REFRESH == 1 {
-				fmt.Println("flag set, refresh vm list")
 				vm_list_refresh()
 				IS_VM_REFRESH = 0
 			}
