@@ -1,6 +1,11 @@
 package gui_pages
 
 import (
+	"fmt"
+	"qemu-gui/helper"
+	"qemu-gui/vars"
+	"regexp"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
@@ -31,6 +36,38 @@ func About_Page(myApp fyne.App) {
 				fyne.TextAlignCenter,
 				fyne.TextStyle{Bold: true},
 			))
+
+			// check qemu executable
+			go func() {
+				for _, qemu_system := range vars.QEMU_SYSTEMS {
+					status, output := helper.Excutable_Command(qemu_system + " --version")
+					if status {
+
+						// find version
+						re := regexp.MustCompile(`QEMU emulator version (\d+\.\d+\.\d+)`)
+						matches := re.FindStringSubmatch(output)
+
+						// if version not found
+						if len(matches) < 2 {
+							aboutRight.Add(widget.NewLabel(
+								fmt.Sprintf("%s is not installed or version not found", qemu_system),
+							))
+							return
+						}
+
+						// show version
+						aboutRight.Add(widget.NewLabel(
+							fmt.Sprintf("%s version: %s", qemu_system, matches[1]),
+						))
+
+					} else {
+						aboutRight.Add(widget.NewLabel(
+							fmt.Sprintf("%s is not installed or not found", qemu_system),
+						))
+					}
+				}
+			}()
+
 		}),
 	)
 
