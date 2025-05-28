@@ -31,3 +31,13 @@ var QEMU_SYSTEMS = []string{
 	"qemu-system-microblazeel",
 	"qemu-system-rx",
 }
+
+var QEMU_ACCEL = []string{
+	"kvm",
+	"hax",
+	"whpx",
+	"tcg",
+	"hvf",
+	"xen",
+	"none",
+}

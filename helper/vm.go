@@ -1,6 +1,9 @@
 package helper
 
-import "fmt"
+import (
+	"fmt"
+	"qemu-gui/vars"
+)
 
 func InterfaceSliceToStringSlice(interfaceSlice []interface{}) ([]string, error) {
 	stringSlice := make([]string, len(interfaceSlice))
@@ -14,8 +17,20 @@ func InterfaceSliceToStringSlice(interfaceSlice []interface{}) ([]string, error)
 	return stringSlice, nil
 }
 
+func InterfaceMapToStringMap(input map[string]interface{}) (map[string]string, error) {
+	result := make(map[string]string)
+	for key, value := range input {
+		str, ok := value.(string)
+		if !ok {
+			return nil, fmt.Errorf("value for key '%s' is not a string", key)
+		}
+		result[key] = str
+	}
+	return result, nil
+}
+
 func Get_VM_List() []string {
-	data, err := Read_Json("./data/config/config.json")
+	data, err := Read_Json(vars.CONFIG_PATH + "/config.json")
 	if err != nil {
 		return []string{}
 	}
@@ -24,4 +39,31 @@ func Get_VM_List() []string {
 		return []string{}
 	}
 	return vm_list
+}
+
+func Add_VM_To_List(vm_name string, vm_uuid string) bool {
+
+	// add vm name
+	data, err := Read_Json(vars.CONFIG_PATH + "/config.json")
+	if err != nil {
+		return false
+	}
+	vm_list, err := InterfaceSliceToStringSlice(data["vm_list"].([]interface{}))
+	if err != nil {
+		return false
+	}
+	vm_list = append(vm_list, vm_name)
+	data["vm_list"] = vm_list
+
+	// add vm uuid
+	vm_uuids, err := InterfaceMapToStringMap(data["vm_uuid"].(map[string]interface{}))
+	if err != nil {
+		return false
+	}
+	vm_uuids[vm_name] = vm_uuid
+	data["vm_uuid"] = vm_uuids
+
+	// write config
+	Write_Json(vars.CONFIG_PATH+"/config.json", data)
+	return true
 }

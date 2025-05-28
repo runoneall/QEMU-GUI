@@ -3,6 +3,7 @@ package gui_pages
 import (
 	"qemu-gui/helper"
 	"qemu-gui/vars"
+	"regexp"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -22,7 +23,6 @@ func New_VM_Page(myApp fyne.App) {
 	vm_qemu := widget.NewSelectEntry(vars.QEMU_SYSTEMS)
 	vm_cpu := widget.NewEntry()
 	vm_memory := widget.NewEntry()
-	vm_enable_kvm := widget.NewCheck("(Need System Support)", func(checked bool) {})
 
 	// form fields (disk pick)
 	vm_disk := widget.NewEntry()
@@ -55,37 +55,67 @@ func New_VM_Page(myApp fyne.App) {
 	vm_memory.PlaceHolder = "MB"
 	vm_memory.SetText("512")
 
-	// default enable kvm
-	vm_enable_kvm.SetChecked(true)
-
 	// create vm
 	vm_create := widget.NewButton("Create", func() {
-		// start_cmd := ""
+		start_cmd := ""
 
 		// check name
 		if vm_name.Text == "" {
 			helper.ShowError(newVMWindow, "Please enter a name for the VM")
+			return
+		}
+		re := regexp.MustCompile(`^[A-Za-z0-9_\-\.]+$`)
+		if !re.MatchString(vm_name.Text) {
+			helper.ShowError(newVMWindow, "Name can only contain letters, numbers, hyphens, underscores, and periods.")
+			return
 		}
 
 		// check qemu
 		if vm_qemu.Text == "" {
 			helper.ShowError(newVMWindow, "Please select a QEMU system")
+			return
 		}
 
 		// check cpu
 		if vm_cpu.Text == "" {
 			helper.ShowError(newVMWindow, "Please enter the number of CPU cores")
+			return
 		}
 
 		// check memory
 		if vm_memory.Text == "" {
 			helper.ShowError(newVMWindow, "Please enter the amount of memory in MB")
+			return
 		}
 
 		// check disk
 		if vm_disk.Text == "" {
 			helper.ShowError(newVMWindow, "Please select a Disk")
+			return
 		}
+
+		// make command
+		start_cmd += vm_qemu.Text + " "
+		start_cmd += "-name " + vm_name.Text + " "
+		start_cmd += "-uuid " + vm_uuid.Text + " "
+		start_cmd += "-m " + vm_memory.Text + "M "
+		start_cmd += "-smp " + vm_cpu.Text + " "
+		start_cmd += "-hda " + vm_disk.Text + " "
+		start_cmd += vm_extra_args.Text
+
+		// save vm
+		helper.Write_Json(
+			vars.CONFIG_PATH+"/"+vm_uuid.Text+".json",
+			map[string]interface{}{
+				"cpu":    vm_cpu.Text,
+				"memory": vm_memory.Text,
+				"start":  start_cmd,
+			},
+		)
+		helper.Add_VM_To_List(vm_name.Text, vm_uuid.Text)
+
+		// close window
+		newVMWindow.Close()
 
 	})
 
@@ -97,7 +127,6 @@ func New_VM_Page(myApp fyne.App) {
 			{Text: "QEMU", Widget: vm_qemu},
 			{Text: "CPU", Widget: vm_cpu},
 			{Text: "Memory", Widget: vm_memory},
-			{Text: "Enable KVM", Widget: vm_enable_kvm},
 			{Text: "Disk", Widget: container.NewBorder(
 				nil, nil, nil,
 				vm_disk_choose_button, vm_disk,
