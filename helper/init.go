@@ -1,6 +1,9 @@
 package helper
 
-import "os"
+import (
+	"os"
+	"qemu-gui/vars"
+)
 
 func Init_Folder(dir_path string) bool {
 	if _, err := os.Stat(dir_path); os.IsNotExist(err) {
@@ -12,13 +15,14 @@ func Init_Folder(dir_path string) bool {
 
 func First_Run_Init() {
 	// init folder
-	Init_Folder("./data")
-	Init_Folder("./data/config")
-	Init_Folder("./data/vms")
+	Init_Folder(vars.DATA_PATH)
+	Init_Folder(vars.CONFIG_PATH)
+	Init_Folder(vars.VM_PATH)
 
 	// init config file
-	if _, err := os.Stat("./data/config/config.json"); os.IsNotExist(err) {
-		Write_Json("./data/config/config.json", map[string]interface{}{
+	config_file_path := vars.CONFIG_PATH + "/config.json"
+	if _, err := os.Stat(config_file_path); os.IsNotExist(err) {
+		Write_Json(config_file_path, map[string]interface{}{
 			"vm_list": []string{},
 			"vm_uuid": map[string]string{},
 		})
