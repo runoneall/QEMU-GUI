@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"image/color"
-	"os"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -15,82 +13,9 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func init_folder(dir_path string) bool {
-	if _, err := os.Stat(dir_path); os.IsNotExist(err) {
-		os.Mkdir(dir_path, 0755)
-		return true
-	}
-	return false
-}
-
-func write_json(file_path string, data map[string]interface{}) error {
-	jsonData, err := json.MarshalIndent(data, "", "  ")
-	if err != nil {
-		return err
-	}
-	file, err := os.Create(file_path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	_, err = file.Write(jsonData)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func read_json(file_path string) (map[string]interface{}, error) {
-	content, err := os.ReadFile(file_path)
-	if err != nil {
-		return nil, err
-	}
-	var data map[string]interface{}
-	err = json.Unmarshal(content, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
-}
-
-func InterfaceSliceToStringSlice(interfaceSlice []interface{}) ([]string, error) {
-	stringSlice := make([]string, len(interfaceSlice))
-	for i, v := range interfaceSlice {
-		str, ok := v.(string)
-		if !ok {
-			return nil, fmt.Errorf("%d not string", i)
-		}
-		stringSlice[i] = str
-	}
-	return stringSlice, nil
-}
-
-func get_vm_list() []string {
-	data, err := read_json("./data/config/config.json")
-	if err != nil {
-		return []string{}
-	}
-	vm_list, err := InterfaceSliceToStringSlice(data["vm_list"].([]interface{}))
-	if err != nil {
-		return []string{}
-	}
-	return vm_list
-}
-
 func main() {
 
-	// init folder
-	init_folder("./data")
-	init_folder("./data/config")
-	init_folder("./data/vms")
-
-	// init config file
-	if _, err := os.Stat("./data/config/config.json"); os.IsNotExist(err) {
-		write_json("./data/config/config.json", map[string]interface{}{
-			"vm_list": []string{},
-			"vm_uuid": map[string]string{},
-		})
-	}
+	first_run_init()
 
 	// init window
 	myApp := app.New()
@@ -122,7 +47,15 @@ func main() {
 
 				// new vm
 				widget.NewButtonWithIcon("New", theme.DocumentCreateIcon(), func() {
-					fmt.Println("new vm")
+
+					// new vm window
+					newVMWindow := myApp.NewWindow("New VM")
+					newVMWindow.Resize(fyne.NewSize(400, 200))
+
+					// show window
+					newVMWindow.SetContent(widget.NewLabel("New VM"))
+					newVMWindow.Show()
+
 				}),
 
 				// refresh vm list
@@ -135,14 +68,41 @@ func main() {
 					fmt.Println("settings")
 				}),
 
-				// help
-				widget.NewButtonWithIcon("Help", theme.HelpIcon(), func() {
-					fmt.Println("help")
-				}),
-
 				// about
 				widget.NewButtonWithIcon("About", theme.InfoIcon(), func() {
-					fmt.Println("about")
+
+					// about window
+					aboutWindow := myApp.NewWindow("About")
+					aboutWindow.Resize(fyne.NewSize(400, 300))
+
+					// right area
+					aboutRight := container.NewVBox(
+						widget.NewLabel("Click Left Button To Use"),
+					)
+
+					// left button
+					aboutLeft := container.NewVBox(
+						widget.NewButtonWithIcon("", theme.InfoIcon(), func() {
+							aboutRight.RemoveAll()
+							aboutRight.Add(widget.NewLabel("关于"))
+						}),
+						widget.NewButtonWithIcon("", theme.ComputerIcon(), func() {
+							aboutRight.RemoveAll()
+							aboutRight.Add(widget.NewLabelWithStyle(
+								"QEMU Excutable Check",
+								fyne.TextAlignCenter,
+								fyne.TextStyle{Bold: true},
+							))
+						}),
+					)
+
+					// show window
+					aboutWindow.SetContent(container.NewHBox(
+						aboutLeft,
+						container.NewVScroll(aboutRight),
+					))
+					aboutWindow.Show()
+
 				}),
 
 				// exit
@@ -156,10 +116,16 @@ func main() {
 	)
 
 	// show window
+	mainContainer := container.NewHSplit(
+		container.NewVScroll(vmList),
+		widget.NewLabel("VM Control"),
+	)
+	mainContainer.SetOffset(0.25)
 	myWindow.SetContent(container.NewBorder(
 		topButtons,    // top
 		nil, nil, nil, // disable bottom left right
-		container.NewVScroll(vmList), // content
+		mainContainer, // content
 	))
-	myWindow.ShowAndRun()
+	myWindow.Show()
+	myApp.Run()
 }
