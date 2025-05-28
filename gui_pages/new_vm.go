@@ -108,6 +108,7 @@ func New_VM_Page(myApp fyne.App) {
 		helper.Write_Json(
 			vars.CONFIG_PATH+"/"+vm_uuid.Text+".json",
 			map[string]interface{}{
+				"uuid":   vm_uuid.Text,
 				"cpu":    vm_cpu.Text,
 				"memory": vm_memory.Text,
 				"start":  start_cmd,

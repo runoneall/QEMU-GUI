@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"qemu-gui/helper"
+	"qemu-gui/qemu_manager"
 	"qemu-gui/ui_extra"
 
 	"fyne.io/fyne/v2"
@@ -37,10 +38,20 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		// vm control buttons
 		vmControl.Add(container.NewHBox(
 			widget.NewButtonWithIcon("Start", theme.MediaPlayIcon(), func() {
-				fmt.Println("start")
+
+				vm_uuid := vm_info["uuid"]
+				if err := qemu_manager.RunCommand(vm_uuid, vm_info["start"]); err != nil {
+					fmt.Printf("Failed to start VM %s: %v\n", vm_uuid, err)
+				}
+
 			}),
 			widget.NewButtonWithIcon("Stop", theme.MediaStopIcon(), func() {
-				fmt.Println("stop")
+
+				vm_uuid := vm_info["uuid"]
+				if err := qemu_manager.StopCommand(vm_uuid); err != nil {
+					fmt.Printf("Failed to stop VM %s: %v\n", vm_uuid, err)
+				}
+
 			}),
 			widget.NewButtonWithIcon("Edit", theme.DocumentCreateIcon(), func() {
 				fmt.Println("edit")
