@@ -20,6 +20,36 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 	vmControl := container.NewVBox(
 		widget.NewLabel("Select VM To Use"),
 	)
+	drawVMControl := func(vm_name string, vm_info map[string]string) {
+		// vm tittle
+		vmControl.Add(widget.NewRichTextFromMarkdown(
+			fmt.Sprintf("## %s", vm_name),
+		))
+
+		// vm info
+		for k, v := range vm_info {
+			if k == "start" {
+				continue
+			}
+			vmControl.Add(widget.NewLabel(fmt.Sprintf("%s: %s", k, v)))
+		}
+
+		// vm control buttons
+		vmControl.Add(container.NewHBox(
+			widget.NewButtonWithIcon("Start", theme.MediaPlayIcon(), func() {
+				fmt.Println("start")
+			}),
+			widget.NewButtonWithIcon("Stop", theme.MediaStopIcon(), func() {
+				fmt.Println("stop")
+			}),
+			widget.NewButtonWithIcon("Edit", theme.DocumentCreateIcon(), func() {
+				fmt.Println("edit")
+			}),
+			widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
+				fmt.Println("delete")
+			}),
+		))
+	}
 
 	// vm list
 	vmList := container.NewVBox()
@@ -51,7 +81,8 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 
 				// set on tapped
 				vmItem.OnTapped = func() {
-					fmt.Println(vm_name)
+					vmControl.RemoveAll()
+					drawVMControl(vm_name, vm_info)
 				}
 
 				// add to vm list
