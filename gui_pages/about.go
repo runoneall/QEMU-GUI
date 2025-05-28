@@ -24,11 +24,19 @@ func About_Page(myApp fyne.App) {
 	)
 
 	// left button
+	aboutButton := widget.NewButtonWithIcon("", theme.InfoIcon(), func() {
+		aboutRight.RemoveAll()
+		aboutRight.Add(
+			widget.NewRichTextFromMarkdown(`# About QEMU GUI
+
+QEMU GUI is a graphical user interface for the QEMU emulator.
+
+It is written in Go and uses the Fyne toolkit for GUI development.
+`),
+		)
+	})
 	aboutLeft := container.NewVBox(
-		widget.NewButtonWithIcon("", theme.InfoIcon(), func() {
-			aboutRight.RemoveAll()
-			aboutRight.Add(widget.NewLabel("关于"))
-		}),
+		aboutButton,
 		widget.NewButtonWithIcon("", theme.ComputerIcon(), func() {
 			aboutRight.RemoveAll()
 			aboutRight.Add(widget.NewLabelWithStyle(
@@ -70,6 +78,7 @@ func About_Page(myApp fyne.App) {
 
 		}),
 	)
+	aboutButton.OnTapped()
 
 	// show window
 	aboutWindow.SetContent(container.NewHBox(
@@ -77,5 +86,4 @@ func About_Page(myApp fyne.App) {
 		container.NewVScroll(aboutRight),
 	))
 	aboutWindow.Show()
-
 }
