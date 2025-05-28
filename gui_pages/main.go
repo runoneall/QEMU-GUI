@@ -28,10 +28,25 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		vmList.RemoveAll()
 		if len(vm_list) > 0 {
 			for _, vm_name := range vm_list {
+				vm_info := helper.GET_VM_Info(helper.GET_VM_UUID(vm_name))
 
 				// vm item container
 				vmItem := ui_extra.NewClickableContainer(
-					widget.NewLabel(vm_name),
+					container.NewHBox(
+
+						// vm icon
+						container.NewCenter(
+							widget.NewIcon(theme.ComputerIcon()),
+						),
+
+						// vm info
+						widget.NewLabel(fmt.Sprintf(
+							"%s\n%s CPU, %sM Memory",
+							vm_name,
+							vm_info["cpu"],
+							vm_info["memory"],
+						)),
+					),
 				)
 
 				// set on tapped
@@ -40,7 +55,10 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 				}
 
 				// add to vm list
-				vmList.Add(vmItem)
+				vmList.Add(container.NewBorder(
+					nil, canvas.NewRectangle(color.Gray{0x99}),
+					nil, nil, vmItem,
+				))
 
 			}
 		} else {

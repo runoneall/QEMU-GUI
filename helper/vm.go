@@ -79,3 +79,15 @@ func Add_VM_To_List(vm_name string, vm_uuid string) bool {
 	Write_Json(vars.CONFIG_PATH+"/config.json", data)
 	return true
 }
+
+func GET_VM_Info(vm_uuid string) map[string]string {
+	data, err := Read_Json(vars.CONFIG_PATH + "/" + vm_uuid + ".json")
+	if err != nil {
+		return nil
+	}
+	config, err := InterfaceMapToStringMap(data)
+	if err != nil {
+		return nil
+	}
+	return config
+}
