@@ -22,7 +22,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 	vmControl := container.NewVBox(
 		widget.NewLabel("Select VM To Use"),
 	)
-	drawVMControl := func(vm_name string, vm_info map[string]string) {
+	drawVMControl := func(vm_name string, vm_info map[string]interface{}) {
 		// vm tittle
 		vmControl.Add(widget.NewRichTextFromMarkdown(
 			fmt.Sprintf("## %s", vm_name),
@@ -40,15 +40,15 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		vmControl.Add(container.NewHBox(
 			widget.NewButtonWithIcon("Start", theme.MediaPlayIcon(), func() {
 
-				vm_uuid := vm_info["uuid"]
-				if err := qemu_manager.RunCommand(vm_uuid, vm_info["start"]); err != nil {
+				vm_uuid := vm_info["UUID"].(string)
+				if err := qemu_manager.RunCommand(vm_uuid, vm_info["start"].(string)); err != nil {
 					fmt.Printf("Failed to start VM %s: %v\n", vm_uuid, err)
 				}
 
 			}),
 			widget.NewButtonWithIcon("Stop", theme.MediaStopIcon(), func() {
 
-				vm_uuid := vm_info["uuid"]
+				vm_uuid := vm_info["UUID"].(string)
 				if err := qemu_manager.StopCommand(vm_uuid); err != nil {
 					fmt.Printf("Failed to stop VM %s: %v\n", vm_uuid, err)
 				}
@@ -60,7 +60,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 			widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
 
 				// delete vm
-				vm_uuid := vm_info["uuid"]
+				vm_uuid := vm_info["UUID"].(string)
 				helper.Delete_VM_From_List(vm_name, vm_uuid)
 				helper.Delete_VM_Config(vm_uuid)
 
@@ -117,7 +117,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 			container.NewHBox( // top buttons
 
 				// new vm
-				widget.NewButtonWithIcon("New", theme.DocumentCreateIcon(), func() {
+				widget.NewButtonWithIcon("New", theme.ContentAddIcon(), func() {
 					New_VM_Page(myApp, vm_list_refresh)
 				}),
 
@@ -144,7 +144,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 	// show window
 	mainContainer := container.NewHSplit(
 		container.NewVScroll(vmList),
-		vmControl,
+		container.NewVScroll(vmControl),
 	)
 	mainContainer.SetOffset(0.25)
 

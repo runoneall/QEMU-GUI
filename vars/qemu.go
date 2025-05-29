@@ -1,5 +1,11 @@
 package vars
 
+var QEMU_BOOT_DEVICES = []string{
+	"none",
+	"iso",
+	"img",
+}
+
 var QEMU_SYSTEMS = []string{
 	"qemu-system-aarch64",
 	"qemu-system-mips",
@@ -32,6 +38,75 @@ var QEMU_SYSTEMS = []string{
 	"qemu-system-rx",
 }
 
+var QEMU_MACHINES = []string{
+	"microvm",
+	"pc-i440fx-9.2",
+	"pc-i440fx-9.1",
+	"pc-i440fx-9.0",
+	"pc-i440fx-8.2",
+	"pc-i440fx-8.1",
+	"pc-i440fx-8.0",
+	"pc-i440fx-7.2",
+	"pc-i440fx-7.1",
+	"pc-i440fx-7.0",
+	"pc-i440fx-6.2",
+	"pc-i440fx-6.1",
+	"pc-i440fx-6.0",
+	"pc-i440fx-5.2",
+	"pc-i440fx-5.1",
+	"pc-i440fx-5.0",
+	"pc-i440fx-4.2",
+	"pc-i440fx-4.1",
+	"pc-i440fx-4.0",
+	"pc-i440fx-3.1",
+	"pc-i440fx-3.0",
+	"pc-i440fx-2.9",
+	"pc-i440fx-2.8",
+	"pc-i440fx-2.7",
+	"pc-i440fx-2.6",
+	"pc-i440fx-2.5",
+	"pc-i440fx-2.4",
+	"pc-i440fx-2.12",
+	"pc-i440fx-2.11",
+	"pc-i440fx-2.10",
+	"pc",
+	"pc-i440fx-10.0",
+	"pc-q35-9.2",
+	"pc-q35-9.1",
+	"pc-q35-9.0",
+	"pc-q35-8.2",
+	"pc-q35-8.1",
+	"pc-q35-8.0",
+	"pc-q35-7.2",
+	"pc-q35-7.1",
+	"pc-q35-7.0",
+	"pc-q35-6.2",
+	"pc-q35-6.1",
+	"pc-q35-6.0",
+	"pc-q35-5.2",
+	"pc-q35-5.1",
+	"pc-q35-5.0",
+	"pc-q35-4.2",
+	"pc-q35-4.1",
+	"pc-q35-4.0.1",
+	"pc-q35-4.0",
+	"pc-q35-3.1",
+	"pc-q35-3.0",
+	"pc-q35-2.9",
+	"pc-q35-2.8",
+	"pc-q35-2.7",
+	"pc-q35-2.6",
+	"pc-q35-2.5",
+	"pc-q35-2.4",
+	"pc-q35-2.12",
+	"pc-q35-2.11",
+	"pc-q35-2.10",
+	"q35",
+	"pc-q35-10.0",
+	"isapc",
+	"none",
+}
+
 var QEMU_ACCEL = []string{
 	"kvm",
 	"hax",
@@ -39,5 +114,26 @@ var QEMU_ACCEL = []string{
 	"tcg",
 	"hvf",
 	"xen",
+	"none",
+}
+
+var QEMU_DISPLAY = []string{
+	"gtk",
+	"cocoa",
+	"sdl",
+}
+
+var QEMU_USB_SUPPORT = []string{
+	"ehci",
+	"xhci",
+	"qemu-xhci",
+	"none",
+}
+
+var QEMU_GPU_MODELS = []string{
+	"std",
+	"qxl",
+	"virtio-gpu-pci",
+	"vmware",
 	"none",
 }

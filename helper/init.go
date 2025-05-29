@@ -20,7 +20,7 @@ func First_Run_Init() {
 	Init_Folder(vars.VM_PATH)
 
 	// init config file
-	config_file_path := vars.CONFIG_PATH + "/config.json"
+	config_file_path := vars.CONFIG_FILE
 	if _, err := os.Stat(config_file_path); os.IsNotExist(err) {
 		Write_Json(config_file_path, map[string]interface{}{
 			"vm_list": []string{},

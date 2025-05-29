@@ -3,6 +3,7 @@ package helper
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"qemu-gui/vars"
 )
 
@@ -31,7 +32,7 @@ func InterfaceMapToStringMap(input map[string]interface{}) (map[string]string, e
 }
 
 func Get_VM_List() []string {
-	data, err := Read_Json(vars.CONFIG_PATH + "/config.json")
+	data, err := Read_Json(vars.CONFIG_FILE)
 	if err != nil {
 		return []string{}
 	}
@@ -43,7 +44,7 @@ func Get_VM_List() []string {
 }
 
 func GET_VM_UUID(vm_name string) string {
-	data, err := Read_Json(vars.CONFIG_PATH + "/config.json")
+	data, err := Read_Json(vars.CONFIG_FILE)
 	if err != nil {
 		return ""
 	}
@@ -57,7 +58,7 @@ func GET_VM_UUID(vm_name string) string {
 func Add_VM_To_List(vm_name string, vm_uuid string) bool {
 
 	// add vm name
-	data, err := Read_Json(vars.CONFIG_PATH + "/config.json")
+	data, err := Read_Json(vars.CONFIG_FILE)
 	if err != nil {
 		return false
 	}
@@ -77,26 +78,22 @@ func Add_VM_To_List(vm_name string, vm_uuid string) bool {
 	data["vm_uuid"] = vm_uuids
 
 	// write config
-	Write_Json(vars.CONFIG_PATH+"/config.json", data)
+	Write_Json(vars.CONFIG_FILE, data)
 	return true
 }
 
-func GET_VM_Info(vm_uuid string) map[string]string {
-	data, err := Read_Json(vars.CONFIG_PATH + "/" + vm_uuid + ".json")
+func GET_VM_Info(vm_uuid string) map[string]interface{} {
+	data, err := Read_Json(filepath.Join(vars.CONFIG_PATH, vm_uuid+".json"))
 	if err != nil {
 		return nil
 	}
-	config, err := InterfaceMapToStringMap(data)
-	if err != nil {
-		return nil
-	}
-	return config
+	return data
 }
 
 func Delete_VM_From_List(vm_name string, vm_uuid string) bool {
 
 	// remove vm name
-	data, err := Read_Json(vars.CONFIG_PATH + "/config.json")
+	data, err := Read_Json(vars.CONFIG_FILE)
 	if err != nil {
 		return false
 	}
@@ -121,12 +118,12 @@ func Delete_VM_From_List(vm_name string, vm_uuid string) bool {
 	data["vm_uuid"] = vm_uuids
 
 	// write config
-	Write_Json(vars.CONFIG_PATH+"/config.json", data)
+	Write_Json(vars.CONFIG_FILE, data)
 	return true
 }
 
 func Delete_VM_Config(vm_uuid string) bool {
-	file_path := vars.CONFIG_PATH + "/" + vm_uuid + ".json"
+	file_path := filepath.Join(vars.CONFIG_PATH, vm_uuid+".json")
 	if _, err := os.Stat(file_path); os.IsNotExist(err) {
 		return false
 	}
