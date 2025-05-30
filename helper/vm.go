@@ -81,7 +81,7 @@ func AddVMToList(vm_name string, vm_uuid string) bool {
 	return WriteJson(vars.CONFIG_FILE, data) == nil
 }
 
-func DeleteVMFromList(vm_name string, vm_uuid string) bool {
+func DeleteVMFromList(vm_uuid string) bool {
 	data, err := ReadJson(vars.CONFIG_FILE)
 	if err != nil {
 		return false

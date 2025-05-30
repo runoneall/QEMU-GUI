@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"qemu-gui/helper"
 	"qemu-gui/qemu_manager"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -21,6 +22,10 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 	vmControl := container.NewVBox(
 		widget.NewLabel("Select VM To Use"),
 	)
+	initVMControl := func() {
+		vmControl.RemoveAll()
+		vmControl.Add(widget.NewLabel("Select VM To Use"))
+	}
 	drawVMControl := func(vm_uuid string) {
 
 		// vm config
@@ -33,10 +38,36 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		// vm name title
 		vmControl.Add(widget.NewRichTextFromMarkdown("## " + vmConfig.Name))
 
+		// vm control buttons
+		vmControl.Add(container.NewHBox(
+
+			// start vm
+			widget.NewButtonWithIcon("Start", theme.MediaPlayIcon(), func() {}),
+
+			// stop vm
+			widget.NewButtonWithIcon("Stop", theme.MediaStopIcon(), func() {}),
+
+			// delete vm
+			widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
+				helper.DeleteVMFromList(vmConfig.UUID)
+				helper.DeleteVMConfig(vmConfig.UUID)
+				IS_VM_REFRESH = 1
+				initVMControl()
+			}),
+
+			// edit vm
+			widget.NewButtonWithIcon("Edit", theme.DocumentCreateIcon(), func() {}),
+		))
+
 		// show vm config
 		showVMConfigWidget := widget.NewMultiLineEntry()
-		showVMConfigWidget.SetText(vmConfig.ToString())
-		vmControl.Add(container.NewHScroll(showVMConfigWidget))
+		vmConfigString := vmConfig.ToString()
+		showVMConfigWidget.SetText(vmConfigString)
+		showVMConfigWidget.TextStyle = fyne.TextStyle{Monospace: true}
+		showVMConfigWidget.SetMinRowsVisible(
+			strings.Count(vmConfigString, "\n") + 1,
+		)
+		vmControl.Add(showVMConfigWidget)
 
 	}
 
@@ -52,7 +83,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 				// vm button
 				vmList.Add(container.NewHScroll(
 					widget.NewButtonWithIcon(vm_name, theme.ComputerIcon(), func() {
-						vmControl.RemoveAll()
+						initVMControl()
 						drawVMControl(vm_uuid)
 					}),
 				))
