@@ -1,6 +1,7 @@
 package gui_pages
 
 import (
+	"context"
 	"image/color"
 	"qemu-gui/helper"
 	"qemu-gui/qemu_manager"
@@ -42,7 +43,10 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		vmControl.Add(container.NewHBox(
 
 			// start vm
-			widget.NewButtonWithIcon("Start", theme.MediaPlayIcon(), func() {}),
+			widget.NewButtonWithIcon("Start", theme.MediaPlayIcon(), func() {
+				t1, _ := vmConfig.BuildOption()
+				t1.Start(context.Background())
+			}),
 
 			// stop vm
 			widget.NewButtonWithIcon("Stop", theme.MediaStopIcon(), func() {}),
