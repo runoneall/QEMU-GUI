@@ -51,6 +51,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 			widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
 				helper.DeleteVMFromList(vmConfig.UUID)
 				helper.DeleteVMConfig(vmConfig.UUID)
+				vmConfig.RemoveDisk()
 				IS_VM_REFRESH = 1
 				initVMControl()
 			}),

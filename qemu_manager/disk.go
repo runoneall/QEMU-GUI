@@ -27,3 +27,20 @@ func ResizeDiskImage(uuid string, size string) error {
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
+
+func (vc *VMConfig) CreateDisk() error {
+	_, err := CreateDiskImage(vc.UUID, "qcow2", vc.Disk.Size)
+	return err
+}
+
+func (vc *VMConfig) DiskPath() string {
+	return filepath.Join(vars.VM_PATH, vc.UUID+".qcow2")
+}
+
+func (vc *VMConfig) RemoveDisk() error {
+	return RemoveDiskImage(vc.UUID)
+}
+
+func (vc *VMConfig) ResizeDisk(size string) error {
+	return ResizeDiskImage(vc.UUID, size)
+}

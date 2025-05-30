@@ -139,6 +139,7 @@ func New_VM_Page(myApp fyne.App, on_finish func()) {
 		// save config
 		vm_config.SaveJson()
 		helper.AddVMToList(vm_config.Name, vm_config.UUID)
+		vm_config.CreateDisk()
 
 		// callback
 		on_finish()

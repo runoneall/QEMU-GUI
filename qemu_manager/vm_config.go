@@ -65,6 +65,10 @@ func (vc *VMConfig) ToString() string {
 	return string(jsonData)
 }
 
+// func (vc *VMConfig) BuildOption() (*qemu.Options, error) {
+
+// }
+
 func GetVMConfig(uuid string) (VMConfig, error) {
 	path := filepath.Join(vars.CONFIG_PATH, uuid+".json")
 	jsonData, err := helper.ReadFile(path)
