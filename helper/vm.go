@@ -116,7 +116,7 @@ func DeleteVMFromList(vm_name string, vm_uuid string) bool {
 
 func Delete_VM_Config(vm_uuid string) bool {
 	file_path := filepath.Join(vars.CONFIG_PATH, vm_uuid+".json")
-	if _, err := os.Stat(file_path); os.IsNotExist(err) {
+	if !IsExist(file_path) {
 		return false
 	}
 	os.Remove(file_path)

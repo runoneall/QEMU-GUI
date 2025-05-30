@@ -21,7 +21,7 @@ func FirstRunInit() {
 
 	// init config file
 	config_file_path := vars.CONFIG_FILE
-	if _, err := os.Stat(config_file_path); os.IsNotExist(err) {
+	if !IsExist(config_file_path) {
 		WriteJson(config_file_path, map[string]interface{}{
 			"vm_list": []string{},
 			"vm_uuid": map[string]string{},

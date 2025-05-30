@@ -1,6 +1,7 @@
 package gui_pages
 
 import (
+	"qemu-gui/helper"
 	"qemu-gui/qemu_manager"
 	"qemu-gui/ui_extra"
 	"qemu-gui/vars"
@@ -130,6 +131,16 @@ func New_VM_Page(myApp fyne.App, on_finish func()) {
 			GPU:   vm_gpu.Selected,
 			Accel: vm_accel.Selected,
 		}
+
+		// save config
+		vm_config.SaveJson()
+		helper.AddVMToList(vm_config.Name, vm_config.UUID)
+
+		// callback
+		on_finish()
+
+		// close window
+		newVMWindow.Close()
 
 	})
 

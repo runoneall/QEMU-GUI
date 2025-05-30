@@ -1,6 +1,13 @@
 package qemu_manager
 
-import "github.com/hugelgupf/vmtest/qemu"
+import (
+	"encoding/json"
+	"path/filepath"
+	"qemu-gui/helper"
+	"qemu-gui/vars"
+
+	"github.com/hugelgupf/vmtest/qemu"
+)
 
 type VMConfigCPU struct {
 	Model   string `json:"Model"`
@@ -32,4 +39,28 @@ type VMConfig struct {
 	Disk            VMConfigDisk   `json:"Disk"`
 	GPU             string         `json:"GPU"`
 	Accel           string         `json:"Accel"`
+}
+
+func (vc *VMConfig) SaveJson() error {
+	jsonData, err := json.MarshalIndent(vc, "", "  ")
+	if err != nil {
+		return err
+	}
+	path := filepath.Join(vars.CONFIG_PATH, vc.UUID+".json")
+	helper.WriteFile(path, jsonData)
+	return nil
+}
+
+func GetVMConfig(uuid string) (VMConfig, error) {
+	path := filepath.Join(vars.CONFIG_PATH, uuid+".json")
+	jsonData, err := helper.ReadFile(path)
+	if err != nil {
+		return VMConfig{}, err
+	}
+	var vc VMConfig
+	err = json.Unmarshal(jsonData, &vc)
+	if err != nil {
+		return VMConfig{}, err
+	}
+	return vc, nil
 }
