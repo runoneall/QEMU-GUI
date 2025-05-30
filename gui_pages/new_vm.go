@@ -130,6 +130,10 @@ func New_VM_Page(myApp fyne.App, on_finish func()) {
 			},
 			GPU:   vm_gpu.Selected,
 			Accel: vm_accel.Selected,
+			Extra: qemu_manager.VMConfigExtra{
+				Machine: vm_qemu_machine_extra.Text,
+				QEMU:    vm_qemu_extra.Text,
+			},
 		}
 
 		// save config

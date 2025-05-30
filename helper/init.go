@@ -6,7 +6,7 @@ import (
 )
 
 func InitFolder(dir_path string) bool {
-	if _, err := os.Stat(dir_path); os.IsNotExist(err) {
+	if !IsExist(dir_path) {
 		os.Mkdir(dir_path, 0755)
 		return true
 	}
@@ -23,8 +23,8 @@ func FirstRunInit() {
 	config_file_path := vars.CONFIG_FILE
 	if !IsExist(config_file_path) {
 		WriteJson(config_file_path, map[string]interface{}{
-			"vm_list": []string{},
-			"vm_uuid": map[string]string{},
+			"vm_list": map[string]string{},
+			"vm_uuid": []string{},
 		})
 	}
 }

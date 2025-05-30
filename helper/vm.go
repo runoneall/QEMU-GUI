@@ -36,89 +36,83 @@ func GetVMList() []string {
 	if err != nil {
 		return []string{}
 	}
-	vm_list, err := InterfaceSliceToStringSlice(data["vm_list"].([]interface{}))
+	vm_uuids, err := InterfaceSliceToStringSlice(data["vm_uuid"].([]interface{}))
 	if err != nil {
 		return []string{}
 	}
-	return vm_list
+	return vm_uuids
 }
 
-func GetVMUUID(vm_name string) string {
+func GetVMName(vm_uuid string) string {
 	data, err := ReadJson(vars.CONFIG_FILE)
 	if err != nil {
 		return ""
 	}
-	vm_uuids, err := InterfaceMapToStringMap(data["vm_uuid"].(map[string]interface{}))
+	vm_list, err := InterfaceMapToStringMap(data["vm_list"].(map[string]interface{}))
 	if err != nil {
 		return ""
 	}
-	return vm_uuids[vm_name]
+	return vm_list[vm_uuid]
 }
 
 func AddVMToList(vm_name string, vm_uuid string) bool {
-
-	// add vm name
 	data, err := ReadJson(vars.CONFIG_FILE)
 	if err != nil {
 		return false
 	}
-	vm_list, err := InterfaceSliceToStringSlice(data["vm_list"].([]interface{}))
+
+	// add vm_name to vm_list
+	vm_list, err := InterfaceMapToStringMap(data["vm_list"].(map[string]interface{}))
 	if err != nil {
 		return false
 	}
-	vm_list = append(vm_list, vm_name)
+	vm_list[vm_uuid] = vm_name
+
+	// add vm_uuid to vm_uuids
+	vm_uuids, err := InterfaceSliceToStringSlice(data["vm_uuid"].([]interface{}))
+	if err != nil {
+		return false
+	}
+	vm_uuids = append(vm_uuids, vm_uuid)
+
+	// update config.json
 	data["vm_list"] = vm_list
-
-	// add vm uuid
-	vm_uuids, err := InterfaceMapToStringMap(data["vm_uuid"].(map[string]interface{}))
-	if err != nil {
-		return false
-	}
-	vm_uuids[vm_name] = vm_uuid
 	data["vm_uuid"] = vm_uuids
-
-	// write config
-	WriteJson(vars.CONFIG_FILE, data)
-	return true
+	return WriteJson(vars.CONFIG_FILE, data) == nil
 }
 
 func DeleteVMFromList(vm_name string, vm_uuid string) bool {
-
-	// remove vm name
 	data, err := ReadJson(vars.CONFIG_FILE)
 	if err != nil {
 		return false
 	}
-	vm_list, err := InterfaceSliceToStringSlice(data["vm_list"].([]interface{}))
+
+	// delete vm_name from vm_list
+	vm_list, err := InterfaceMapToStringMap(data["vm_list"].(map[string]interface{}))
 	if err != nil {
 		return false
 	}
-	for i, v := range vm_list {
-		if v == vm_name {
-			vm_list = append(vm_list[:i], vm_list[i+1:]...)
+	delete(vm_list, vm_uuid)
+
+	// delete vm_uuid from vm_uuids
+	vm_uuids, err := InterfaceSliceToStringSlice(data["vm_uuid"].([]interface{}))
+	if err != nil {
+		return false
+	}
+	for i, uuid := range vm_uuids {
+		if uuid == vm_uuid {
+			vm_uuids = append(vm_uuids[:i], vm_uuids[i+1:]...)
 			break
 		}
 	}
+
+	// update config.json
 	data["vm_list"] = vm_list
-
-	// remove vm uuid
-	vm_uuids, err := InterfaceMapToStringMap(data["vm_uuid"].(map[string]interface{}))
-	if err != nil {
-		return false
-	}
-	delete(vm_uuids, vm_name)
 	data["vm_uuid"] = vm_uuids
-
-	// write config
-	WriteJson(vars.CONFIG_FILE, data)
-	return true
+	return WriteJson(vars.CONFIG_FILE, data) == nil
 }
 
-func Delete_VM_Config(vm_uuid string) bool {
-	file_path := filepath.Join(vars.CONFIG_PATH, vm_uuid+".json")
-	if !IsExist(file_path) {
-		return false
-	}
-	os.Remove(file_path)
-	return true
+func DeleteVMConfig(vm_uuid string) bool {
+	path := filepath.Join(vars.CONFIG_PATH, vm_uuid+".json")
+	return os.Remove(path) == nil
 }

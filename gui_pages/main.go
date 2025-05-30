@@ -3,6 +3,7 @@ package gui_pages
 import (
 	"image/color"
 	"qemu-gui/helper"
+	"qemu-gui/qemu_manager"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -20,6 +21,24 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 	vmControl := container.NewVBox(
 		widget.NewLabel("Select VM To Use"),
 	)
+	drawVMControl := func(vm_uuid string) {
+
+		// vm config
+		vmConfig, err := qemu_manager.GetVMConfig(vm_uuid)
+		if err != nil {
+			vmControl.Add(widget.NewLabel("Error: " + err.Error()))
+			return
+		}
+
+		// vm name title
+		vmControl.Add(widget.NewRichTextFromMarkdown("## " + vmConfig.Name))
+
+		// show vm config
+		showVMConfigWidget := widget.NewMultiLineEntry()
+		showVMConfigWidget.SetText(vmConfig.ToString())
+		vmControl.Add(container.NewHScroll(showVMConfigWidget))
+
+	}
 
 	// vm list
 	vmList := container.NewVBox()
@@ -27,9 +46,16 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		vm_list := helper.GetVMList()
 		vmList.RemoveAll()
 		if len(vm_list) > 0 {
-			for _, vm_name := range vm_list {
+			for _, vm_uuid := range vm_list {
+				vm_name := helper.GetVMName(vm_uuid)
 
-				println(vm_name)
+				// vm button
+				vmList.Add(container.NewHScroll(
+					widget.NewButtonWithIcon(vm_name, theme.ComputerIcon(), func() {
+						vmControl.RemoveAll()
+						drawVMControl(vm_uuid)
+					}),
+				))
 
 			}
 		} else {
