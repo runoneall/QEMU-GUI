@@ -40,15 +40,15 @@ It is written in Go and uses the Fyne toolkit for GUI development.
 		widget.NewButtonWithIcon("", theme.ComputerIcon(), func() {
 			aboutRight.RemoveAll()
 			aboutRight.Add(widget.NewLabelWithStyle(
-				"QEMU Excutable Check",
+				"QEMU Arch Support Check",
 				fyne.TextAlignCenter,
 				fyne.TextStyle{Bold: true},
 			))
 
 			// check qemu executable
 			go func() {
-				for _, qemu_system := range vars.QEMU_SYSTEMS {
-					status, output := helper.Excutable_Command(qemu_system + " --version")
+				for _, qemu_arch := range vars.QEMU_SUPPORTED_ARCH {
+					status, output := helper.ExcutableCommand(qemu_arch + " --version")
 					if status {
 
 						// find version
@@ -58,19 +58,19 @@ It is written in Go and uses the Fyne toolkit for GUI development.
 						// if version not found
 						if len(matches) < 2 {
 							aboutRight.Add(widget.NewLabel(
-								fmt.Sprintf("%s is not installed or version not found", qemu_system),
+								fmt.Sprintf("%s is not installed or version not found", qemu_arch),
 							))
 							return
 						}
 
 						// show version
 						aboutRight.Add(widget.NewLabel(
-							fmt.Sprintf("%s version: %s", qemu_system, matches[1]),
+							fmt.Sprintf("%s version: %s", qemu_arch, matches[1]),
 						))
 
 					} else {
 						aboutRight.Add(widget.NewLabel(
-							fmt.Sprintf("%s is not installed or not found", qemu_system),
+							fmt.Sprintf("%s is not installed or not found", qemu_arch),
 						))
 					}
 				}

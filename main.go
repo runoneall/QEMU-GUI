@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	helper.First_Run_Init()
+	helper.FirstRunInit()
 
 	// init window
 	myApp := app.New()

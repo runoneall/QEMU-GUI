@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func Excutable_Command(cmd string) (bool, string) {
+func ExcutableCommand(cmd string) (bool, string) {
 	// system shell
 	var shell string
 	var shellArg string
