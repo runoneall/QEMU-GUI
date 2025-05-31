@@ -48,7 +48,7 @@ It is written in Go and uses the Fyne toolkit for GUI development.
 			// check qemu executable
 			go func() {
 				for _, qemu_arch := range vars.QEMU_SUPPORTED_ARCH {
-					status, output := helper.ExcutableCommand(qemu_arch + " --version")
+					status, output := helper.ExcutableCommand(vars.QEMU_ARCH[qemu_arch] + " --version")
 					if status {
 
 						// find version

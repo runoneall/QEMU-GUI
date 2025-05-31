@@ -27,6 +27,7 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		vmControl.Add(widget.NewLabel("Select VM To Use"))
 	}
 	drawVMControl := func(vm_uuid string) {
+		vmControl.RemoveAll()
 
 		// vm config
 		vmConfig, err := qemu_manager.GetVMConfig(vm_uuid)
@@ -43,14 +44,13 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 
 			// start vm
 			widget.NewButtonWithIcon("Start", theme.MediaPlayIcon(), func() {
-				go func() {
-					start_command := vmConfig.BuildOption()
-					println(start_command)
-				}()
+				qemu_manager.StartVM(vm_uuid, vmConfig.BuildOption())
 			}),
 
 			// stop vm
-			widget.NewButtonWithIcon("Stop", theme.MediaStopIcon(), func() {}),
+			widget.NewButtonWithIcon("Stop", theme.MediaStopIcon(), func() {
+				qemu_manager.DeleteVM(vm_uuid)
+			}),
 
 			// delete vm
 			widget.NewButtonWithIcon("Delete", theme.DeleteIcon(), func() {
