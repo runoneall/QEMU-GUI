@@ -1,9 +1,7 @@
 package gui_pages
 
 import (
-	"context"
 	"image/color"
-	"os"
 	"qemu-gui/helper"
 	"qemu-gui/qemu_manager"
 	"strings"
@@ -45,10 +43,10 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 
 			// start vm
 			widget.NewButtonWithIcon("Start", theme.MediaPlayIcon(), func() {
-				qemu_target, _ := vmConfig.BuildOption()
-				qemu_target.SerialOutput = append(qemu_target.SerialOutput, os.Stdout)
-				vm, _ := qemu_target.Start(context.Background())
-				vm.Wait()
+				go func() {
+					start_command := vmConfig.BuildOption()
+					println(start_command)
+				}()
 			}),
 
 			// stop vm

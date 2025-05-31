@@ -61,10 +61,6 @@ func New_VM_Page(myApp fyne.App, on_finish func()) {
 	vm_machine := widget.NewSelect(vars.QEMU_MACHINE, func(s string) {})
 	vm_machine.SetSelected("q35")
 
-	// vm use uefi
-	vm_use_uefi := widget.NewCheck("(Need System Support)", func(b bool) {})
-	vm_use_uefi.SetChecked(true)
-
 	// vm use acpi
 	vm_use_acpi := widget.NewCheck("(Need System Support)", func(b bool) {})
 	vm_use_acpi.SetChecked(true)
@@ -110,7 +106,6 @@ func New_VM_Page(myApp fyne.App, on_finish func()) {
 			UUID:            vm_uuid.Text,
 			Name:            vm_name.Text,
 			WithQEMUCommand: vars.QEMU_ARCH[vm_arch.Selected],
-			OptionsForArch:  vars.QEMU_VMTEST_ARCH[vm_arch.Selected],
 			CPU: qemu_manager.VMConfigCPU{
 				Model:   vm_cpu_model.Text,
 				Cores:   vm_cpu_cores.Text,
@@ -122,7 +117,6 @@ func New_VM_Page(myApp fyne.App, on_finish func()) {
 				Max:   vm_memory_max.Text,
 			},
 			Machine: vm_machine.Selected,
-			UseUEFI: vm_use_uefi.Checked,
 			UseACPI: vm_use_acpi.Checked,
 			Disk: qemu_manager.VMConfigDisk{
 				Size:  vm_disk_size.Text,
@@ -158,7 +152,6 @@ func New_VM_Page(myApp fyne.App, on_finish func()) {
 			{Text: "CPU", Widget: vm_cpu_form_field},
 			{Text: "Memory", Widget: vm_memory_form_field},
 			{Text: "Machine", Widget: vm_machine},
-			{Text: "UEFI", Widget: vm_use_uefi},
 			{Text: "ACPI", Widget: vm_use_acpi},
 			{Text: "Disk", Widget: vm_disk_size},
 			{Text: "CD/DVD", Widget: vm_cdrom_form_field},

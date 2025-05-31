@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 	"qemu-gui/helper"
 	"qemu-gui/vars"
-
-	"github.com/hugelgupf/vmtest/qemu"
 )
 
 type VMConfigCPU struct {
@@ -35,11 +33,9 @@ type VMConfig struct {
 	UUID            string         `json:"UUID"`
 	Name            string         `json:"Name"`
 	WithQEMUCommand string         `json:"WithQEMUCommand"`
-	OptionsForArch  qemu.Arch      `json:"OptionsForArch"`
 	CPU             VMConfigCPU    `json:"CPU"`
 	Memory          VMConfigMemory `json:"Memory"`
 	Machine         string         `json:"Machine"`
-	UseUEFI         bool           `json:"UseUEFI"`
 	UseACPI         bool           `json:"UseACPI"`
 	Disk            VMConfigDisk   `json:"Disk"`
 	GPU             string         `json:"GPU"`

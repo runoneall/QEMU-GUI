@@ -1,7 +1,5 @@
 package vars
 
-import "github.com/hugelgupf/vmtest/qemu"
-
 var QEMU_SUPPORTED_ARCH = []string{
 	"amd64",
 	"i386",
@@ -16,14 +14,6 @@ var QEMU_ARCH = map[string]string{
 	"arm64":   "qemu-system-aarch64",
 	"arm":     "qemu-system-arm",
 	"riscv64": "qemu-system-riscv64",
-}
-
-var QEMU_VMTEST_ARCH = map[string]qemu.Arch{
-	"amd64":   qemu.ArchAMD64,
-	"i386":    qemu.ArchI386,
-	"arm64":   qemu.ArchArm64,
-	"arm":     qemu.ArchArm,
-	"riscv64": qemu.ArchRiscv64,
 }
 
 var QEMU_CPU = []string{
