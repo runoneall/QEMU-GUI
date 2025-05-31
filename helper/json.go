@@ -4,6 +4,14 @@ import (
 	"encoding/json"
 )
 
+func InvertMap(m map[string]string) map[string]string {
+	inverted := make(map[string]string, len(m))
+	for k, v := range m {
+		inverted[v] = k
+	}
+	return inverted
+}
+
 func WriteJson(file_path string, data map[string]interface{}) error {
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {

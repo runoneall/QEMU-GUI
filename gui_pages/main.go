@@ -15,6 +15,7 @@ import (
 )
 
 var IS_VM_REFRESH = 0
+var REDRAW_VM_CONTROL = ""
 
 func Main_Page(myApp fyne.App) *fyne.Container {
 
@@ -62,7 +63,12 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 			}),
 
 			// edit vm
-			widget.NewButtonWithIcon("Edit", theme.DocumentCreateIcon(), func() {}),
+			widget.NewButtonWithIcon("Edit", theme.DocumentCreateIcon(), func() {
+				Edit_VM_Page(myApp, vm_uuid, func() {
+					IS_VM_REFRESH = 1
+					REDRAW_VM_CONTROL = vm_uuid
+				})
+			}),
 		))
 
 		// show vm config
@@ -76,6 +82,14 @@ func Main_Page(myApp fyne.App) *fyne.Container {
 		vmControl.Add(showVMConfigWidget)
 
 	}
+	go func() {
+		for {
+			if REDRAW_VM_CONTROL != "" {
+				drawVMControl(REDRAW_VM_CONTROL)
+				REDRAW_VM_CONTROL = ""
+			}
+		}
+	}()
 
 	// vm list
 	vmList := container.NewVBox()
